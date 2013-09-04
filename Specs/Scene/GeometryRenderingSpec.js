@@ -1082,7 +1082,7 @@ defineSuite([
                 Cartographic.fromDegrees(0.0, -1.0),
                 Cartographic.fromDegrees(0.0, 1.0)
             ]);
-            width = 100000;
+            width = 200000;
             instance = new GeometryInstance({
                 geometry : new CorridorGeometry({
                     vertexFormat : PerInstanceColorAppearance.FLAT_VERTEX_FORMAT,
@@ -1147,7 +1147,7 @@ defineSuite([
                  Cartographic.fromDegrees(0.0, -1.0),
                  Cartographic.fromDegrees(0.0, 1.0)
              ]);
-            extrudedHeight = 200000.0;
+            extrudedHeight = 300000.0;
             geometryHeight = 100000.0;
             instance = new GeometryInstance({
                 geometry : new CorridorGeometry({
