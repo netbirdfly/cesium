@@ -3,12 +3,14 @@ define([
         '../Core/defined',
         '../Core/defineProperties',
         '../Core/DeveloperError',
-        '../Core/TimeIntervalCollection'
+        '../Core/TimeIntervalCollection',
+        './Property'
     ], function(
         defined,
         defineProperties,
         DeveloperError,
-        TimeIntervalCollection) {
+        TimeIntervalCollection,
+        Property) {
     "use strict";
 
     /**
@@ -74,6 +76,12 @@ define([
             return innerProperty.getValue(time, result);
         }
         return undefined;
+    };
+
+    CompositeMaterialProperty.prototype.equals = function(other) {
+        return this === other || //
+               (other instanceof CompositeMaterialProperty && //
+                this._intervals.equals(other._intervals, Property.equals));
     };
 
     return CompositeMaterialProperty;

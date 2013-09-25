@@ -50,6 +50,8 @@ define([
      */
     MaterialProperty.prototype.getValue = throwInstantiationError;
 
+    MaterialProperty.prototype.equals = throwInstantiationError;
+
     /**
      * @private
      */

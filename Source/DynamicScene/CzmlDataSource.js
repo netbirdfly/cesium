@@ -753,8 +753,8 @@ define([
         if (defined(cartographic) || defined(cartesian)) {
             if (!defined(cartesian)) {
                 cartesian = Ellipsoid.WGS84.cartographicArrayToCartesianArray(cartographic);
-                dynamicObject.vertexPositions = new ConstantProperty(cartesian);
             }
+            dynamicObject.vertexPositions = new ConstantProperty(cartesian);
         } else {
             var vertexPositions = dynamicObject.vertexPositions;
             if (!defined(vertexPositions)) {

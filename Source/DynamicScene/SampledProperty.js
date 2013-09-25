@@ -401,6 +401,42 @@ define([
         this._updateTableLength = true;
     };
 
+    SampledProperty.prototype.equals = function(other) {
+        if (this === other) {
+            return true;
+        }
+        if (!defined(other)) {
+            return false;
+        }
+
+        var times = this._times;
+        var otherTimes = other._times;
+        var length = times.length;
+
+        if (length !== otherTimes.length) {
+            return false;
+        }
+
+        var i;
+        for (i = 0; i < length; i++) {
+            if (!times[i].equals(otherTimes[i])) {
+                return false;
+            }
+        }
+
+        var values = this._values;
+        var otherValues = other._values;
+        for (i = 0; i < length; i++) {
+            if (!values[i].equals(otherValues[i])) {
+                return false;
+            }
+        }
+
+        return this._type === other._type && //
+               this._interpolationDegree === other._interpolationDegree && //
+               this._interpolationAlgorithm === other._interpolationAlgorithm;
+    };
+
     //Exposed for testing.
     SampledProperty._mergeNewSamples = mergeNewSamples;
 

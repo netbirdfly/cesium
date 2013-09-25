@@ -165,5 +165,9 @@ define([
         return NearFarScalar.clone(this, result);
     };
 
+    NearFarScalar.prototype.equals = function(right) {
+        return NearFarScalar.equals(this, right);
+    };
+
     return NearFarScalar;
 });

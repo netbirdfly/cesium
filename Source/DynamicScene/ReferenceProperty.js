@@ -106,5 +106,12 @@ define([
         return defined(targetProperty) && this._targetObject.isAvailable(time) ? targetProperty.getValue(time, result) : undefined;
     };
 
+    ReferenceProperty.prototype.equals = function(other) {
+        return this === other || //
+               (this.dynamicObjectCollection === other.dynamicObjectCollection && //
+                this.targetObjectId === other.targetObjectId && //
+                this.targetPropertyName === other.targetPropertyName);
+    };
+
     return ReferenceProperty;
 });

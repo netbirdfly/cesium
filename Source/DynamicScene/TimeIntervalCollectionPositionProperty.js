@@ -6,7 +6,8 @@ define([
         '../Core/DeveloperError',
         '../Core/ReferenceFrame',
         '../Core/TimeIntervalCollection',
-        './PositionProperty'
+        './PositionProperty',
+        './Property'
     ], function(
         defaultValue,
         defined,
@@ -14,7 +15,8 @@ define([
         DeveloperError,
         ReferenceFrame,
         TimeIntervalCollection,
-        PositionProperty) {
+        PositionProperty,
+        Property) {
     "use strict";
 
     /**
@@ -93,6 +95,13 @@ define([
             return PositionProperty.convertToReferenceFrame(time, position, this._referenceFrame, referenceFrame, result);
         }
         return undefined;
+    };
+
+    TimeIntervalCollectionPositionProperty.prototype.equals = function(other) {
+        return this === other || //
+               (other instanceof TimeIntervalCollectionPositionProperty && //
+                this._intervals.equals(other._intervals, Property.equals) && //
+                this._referenceFrame === other._referenceFrame);
     };
 
     return TimeIntervalCollectionPositionProperty;

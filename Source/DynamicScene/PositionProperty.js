@@ -76,6 +76,8 @@ define([
      */
     PositionProperty.prototype.getValueInReferenceFrame = throwInstantiationError;
 
+    PositionProperty.prototype.equals = throwInstantiationError;
+
     var scratchMatrix3 = new Matrix3();
 
     /**
