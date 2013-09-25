@@ -194,7 +194,8 @@ define([
                     id : id,
                     geometry : PolygonGeometry.fromPositions({
                         positions : vertexPositions.getValue(time),
-                        vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT
+                        vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT,
+                        extrudedHeight: 10000
                     }),
                     attributes : {
                         show : new ShowGeometryInstanceAttribute(show),
