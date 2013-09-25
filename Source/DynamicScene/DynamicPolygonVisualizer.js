@@ -96,8 +96,7 @@ define([
         this._dynamicObjectCollection = undefined;
         this._addedObjects = new DynamicObjectCollection();
         this._removedObjects = new DynamicObjectCollection();
-        this._geometries = new HashMap();
-        this._createPrimitive = false;
+        this._colorGeometries = new HashMap();
 
         this.setDynamicObjectCollection(dynamicObjectCollection);
     };
@@ -188,14 +187,17 @@ define([
                 color = defined(colorProperty) ? colorProperty.getValue(time) : Color.WHITE;
 
                 var showProperty = polygon.show;
-                show = defined(showProperty) ? showProperty.getValue(time) : true;
+                show = dynamicObject.isAvailable(time) && (defined(showProperty) ? showProperty.getValue(time) : true);
 
+                var positions = vertexPositions.getValue(time);
+                if (positions[0].equals(positions[positions.length - 1])) {
+                    positions = positions.slice(0, positions.length - 1);
+                }
                 instance = new GeometryInstance({
                     id : id,
                     geometry : PolygonGeometry.fromPositions({
-                        positions : vertexPositions.getValue(time),
-                        vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT,
-                        extrudedHeight: 10000
+                        positions : positions,
+                        vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT
                     }),
                     attributes : {
                         show : new ShowGeometryInstanceAttribute(show),
@@ -205,10 +207,11 @@ define([
 
                 instance.dynamicColor = defined(colorProperty) && !(colorProperty instanceof ConstantProperty);
                 instance.color = colorProperty;
-                instance.dynamicShow = defined(showProperty) && !(showProperty instanceof ConstantProperty);
+                instance.dynamicShow = (defined(showProperty) && !(showProperty instanceof ConstantProperty)) || defined(dynamicObject.availability);
                 instance.show = showProperty;
+                instance.dynamicObject = dynamicObject;
 
-                this._geometries.add(instance);
+                this._colorGeometries.add(instance);
                 createPrimitive = true;
             }
         }
@@ -224,7 +227,7 @@ define([
             }
             primitive = new Primitive({
                 asynchronous : false,
-                geometryInstances : this._geometries.getArray(),
+                geometryInstances : this._colorGeometries.getArray(),
                 appearance : new PerInstanceColorAppearance({
                     translucent : true
                 })
@@ -233,7 +236,7 @@ define([
             primitives.add(primitive);
             this._primitive = primitive;
         } else {
-            var geometries = this._geometries.getArray();
+            var geometries = this._colorGeometries.getArray();
             for (i = geometries.length - 1; i > -1; i--) {
                 instance = geometries[i];
                 var attributes = instance.dynamicAttributes;
@@ -248,7 +251,7 @@ define([
                     }
                 }
                 if (instance.dynamicShow) {
-                    show = instance.show.getValue(time);
+                    show = instance.dynamicObject.isAvailable(time) && (!defined(instance.show) || instance.show.getValue(time));
                     if (defined(show)) {
                         attributes.show = ShowGeometryInstanceAttribute.toValue(show, attributes.show);
                     }
