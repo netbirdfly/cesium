@@ -53,6 +53,16 @@ define([
         this._array.push(value);
     };
 
+    HashMap.prototype.remove = function(value) {
+        var hasValue = defined(this._hash[value.id]);
+        if (hasValue) {
+            var array = this._array;
+            this._hash[value.id] = undefined;
+            array.splice(array.indexOf(value), 1);
+        }
+        return hasValue;
+    };
+
     HashMap.prototype.getArray = function() {
         return this._array;
     };
@@ -95,8 +105,13 @@ define([
         this._dynamicObjectCollection = undefined;
         this._addedObjects = new DynamicObjectCollection();
         this._removedObjects = new DynamicObjectCollection();
+
         this._colorGeometries = new HashMap();
         this._colorPrimitive = undefined;
+
+        this._unusedPolygons = [];
+        this._dynamicPolygons = {};
+
         this.setDynamicObjectCollection(dynamicObjectCollection);
     };
 
@@ -162,8 +177,20 @@ define([
         var instance;
         var color;
         var show;
+        var dynamicPrimitive;
+
         for (i = removed.length - 1; i > -1; i--) {
             dynamicObject = removed[i];
+            if (this._colorGeometries.remove(dynamicObject)) {
+                createColorPrimitive = true;
+            } else {
+                dynamicPrimitive = this._dynamicPolygons[dynamicObject.id];
+                if (defined(dynamicPrimitive)) {
+                    this._dynamicPolygons[dynamicObject.id] = undefined;
+                    this._unusedPolygons.push(dynamicPrimitive);
+                    dynamicPrimitive.show = false;
+                }
+            }
         }
 
         for (i = added.length - 1; i > -1; i--) {
@@ -184,12 +211,8 @@ define([
             show = dynamicObject.isAvailable(time) && (defined(showProperty) ? showProperty.getValue(time) : true);
 
             var positions = vertexPositions.getValue(time);
-            if (positions[0].equals(positions[positions.length - 1])) {
-                positions = positions.slice(0, positions.length - 1);
-            }
-
             var material = polygon.material;
-            if (material instanceof ColorMaterialProperty) {
+            if (vertexPositions instanceof ConstantProperty && material instanceof ColorMaterialProperty) {
                 var colorProperty = material.color;
                 color = defined(colorProperty) ? colorProperty.getValue(time) : Color.WHITE;
                 instance = new GeometryInstance({
@@ -212,8 +235,21 @@ define([
 
                 this._colorGeometries.add(instance);
                 createColorPrimitive = true;
+            } else if (show) {
+                var polygonPrimitive = this._unusedPolygons.pop();
+                if (!defined(polygonPrimitive)) {
+                    polygonPrimitive = new Polygon();
+                }
+                polygonPrimitive.id = polygonPrimitive;
+                this._dynamicPolygons[dynamicObject.id] = polygonPrimitive;
+                this._dynamicPolygonsArray.push(polygonPrimitive);
             } else {
-
+                dynamicPrimitive = this._dynamicPolygons[dynamicObject.id];
+                if (defined(dynamicPrimitive)) {
+                    this._dynamicPolygons[dynamicObject.id] = undefined;
+                    this._unusedPolygons.push(dynamicPrimitive);
+                    dynamicPrimitive.show = false;
+                }
             }
         }
 
@@ -265,6 +301,15 @@ define([
      * Removes all primitives from the scene.
      */
     DynamicPolygonVisualizer.prototype.removeAllPrimitives = function() {
+        var primitives = this._primitives;
+        this._addedObjects.removeAll();
+        this._removedObjects.removeAll();
+        if (defined(this._colorPrimitive)) {
+            this._colorGeometries = new HashMap();
+            primitives.remove(this._colorPrimitive);
+        }
+        this._unusedPolygons = [];
+        this._dynamicPolygons = {};
     };
 
     /**
