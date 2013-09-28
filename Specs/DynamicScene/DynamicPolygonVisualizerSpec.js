@@ -210,9 +210,11 @@ defineSuite([
         var primitive = scene.getPrimitives().get(0);
 
         visualizer.update(time);
+
         //Clearing won't actually remove the primitive because of the
         //internal cache used by the visualizer, instead it just hides it.
         dynamicObjectCollection.removeAll();
+        visualizer.update(time);
         expect(primitive.show).toEqual(false);
     });
 
@@ -233,7 +235,7 @@ defineSuite([
         visualizer.update(time);
         expect(scene.getPrimitives().getLength()).toEqual(1);
         var primitive = scene.getPrimitives().get(0);
-        expect(primitive.dynamicObject).toEqual(testObject);
+        expect(primitive.id).toEqual(testObject);
     });
 
     it('setDynamicObjectCollection removes old objects and add new ones.', function() {
@@ -256,7 +258,7 @@ defineSuite([
         visualizer.update(time);
         expect(scene.getPrimitives().getLength()).toEqual(1);
         var primitive = scene.getPrimitives().get(0);
-        expect(primitive.dynamicObject).toEqual(testObject);
+        expect(primitive.id).toEqual(testObject);
 
         visualizer.setDynamicObjectCollection(dynamicObjectCollection2);
         visualizer.update(time);
