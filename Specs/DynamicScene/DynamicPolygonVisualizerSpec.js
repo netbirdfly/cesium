@@ -173,25 +173,27 @@ defineSuite([
         polygon.material = new ColorMaterialProperty();
 
         visualizer.update(time);
+        scene.render();
 
         expect(scene.getPrimitives().getLength()).toEqual(1);
 
         var primitive = scene.getPrimitives().get(0);
-
         visualizer.update(time);
-        expect(primitive.show).toEqual(testObject.polygon.show.getValue(time));
-        expect(primitive.material.uniforms).toEqual(testObject.polygon.material.getValue(time));
+
+        var attributes = primitive.getGeometryInstanceAttributes(testObject);
+        expect(attributes.show[0]).toEqual(1);
+        expect(attributes.color).toEqual(testObject.polygon.material.getValue(time).color.toBytes());
 
         testObject.vertexPositions = new ConstantProperty([new Cartesian3(5678, 1234, 1101112), new Cartesian3(1234, 5678, 9101112), new Cartesian3(1234, 5678, 910111)]);
         polygon.material = new ColorMaterialProperty();
 
         visualizer.update(time);
-        expect(primitive.show).toEqual(testObject.polygon.show.getValue(time));
-        expect(primitive.material.uniforms).toEqual(testObject.polygon.material.getValue(time));
+        expect(attributes.show[0]).toEqual(1);
+        expect(attributes.color).toEqual(testObject.polygon.material.getValue(time).color.toBytes());
 
         polygon.show = new ConstantProperty(false);
         visualizer.update(time);
-        expect(primitive.show).toEqual(testObject.polygon.show.getValue(time));
+        expect(attributes.show[0]).toEqual(0);
     });
 
     it('clear hides primitives.', function() {
@@ -264,6 +266,6 @@ defineSuite([
         visualizer.update(time);
         expect(scene.getPrimitives().getLength()).toEqual(1);
         primitive = scene.getPrimitives().get(0);
-        expect(primitive.dynamicObject).toEqual(testObject2);
+        expect(primitive.id).toEqual(testObject2);
     });
 }, 'WebGL');

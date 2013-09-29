@@ -202,7 +202,8 @@ define([
 
     DynamicGeometryVisualizer.prototype.add = function(dynamicObject) {
         var vertexPositions = dynamicObject.vertexPositions;
-        if (!defined(vertexPositions)) {
+        var ellipseProperty = dynamicObject._ellipse;
+        if (!defined(vertexPositions) && !defined(ellipseProperty)) {
             return;
         }
 
@@ -301,6 +302,7 @@ define([
 
         this._polygons.removeAll();
         this._unusedPolygons.length = 0;
+        this._dynamicObjects.removeAll();
     };
 
     /**
@@ -394,6 +396,7 @@ define([
             throw new DeveloperError('time is requied.');
         }
 
+        var polygon;
         var staticGeometry = this._staticGeometry;
         var dynamicGeometry = this._dynamicGeometry;
 
@@ -408,12 +411,24 @@ define([
             dynamicObject = removed[i];
             staticGeometry.remove(dynamicObject);
             dynamicGeometry.remove(dynamicObject);
+
+            dynamicObject.propertyChanged.removeEventListener(DynamicPolygonVisualizer._onPropertyChanged, this);
+            polygon = dynamicObject.polygon;
+            if (defined(polygon)) {
+                polygon.propertyChanged.removeEventListener(DynamicPolygonVisualizer._onPolygonPropertyChanged, this);
+            }
         }
 
         for (i = added.length - 1; i > -1; i--) {
             dynamicObject = added[i];
             staticGeometry.add(time, dynamicObject);
             dynamicGeometry.add(dynamicObject);
+
+            dynamicObject.propertyChanged.addEventListener(DynamicPolygonVisualizer._onPropertyChanged, this);
+            polygon = dynamicObject.polygon;
+            if (defined(polygon)) {
+                polygon.propertyChanged.addEventListener(DynamicPolygonVisualizer._onPolygonPropertyChanged, this);
+            }
         }
 
         addedObjects.removeAll();
@@ -427,6 +442,17 @@ define([
      * Removes all primitives from the scene.
      */
     DynamicPolygonVisualizer.prototype.removeAllPrimitives = function() {
+        var removed = this._removedObjects.getObjects();
+        var dynamicObject;
+        for (var i = removed.length - 1; i > -1; i--) {
+            dynamicObject = removed[i];
+            dynamicObject.propertyChanged.removeEventListener(DynamicPolygonVisualizer._onPropertyChanged, this);
+            var polygon = dynamicObject.polygon;
+            if (defined(polygon)) {
+                polygon.propertyChanged.removeEventListener(DynamicPolygonVisualizer._onPolygonPropertyChanged, this);
+            }
+        }
+
         this._addedObjects.removeAll();
         this._removedObjects.removeAll();
         this._staticGeometry.removeAllPrimitives();
@@ -471,6 +497,12 @@ define([
     DynamicPolygonVisualizer.prototype.destroy = function() {
         this.removeAllPrimitives();
         return destroyObject(this);
+    };
+
+    DynamicPolygonVisualizer._onPropertyChanged = function(dyamicObject, name, value, oldValue) {
+    };
+
+    DynamicPolygonVisualizer._onPolygonPropertyChanged = function(polygon, name, value, oldValue) {
     };
 
     DynamicPolygonVisualizer.prototype.onCollectionChanged = function(dynamicObjectCollection, added, removed) {
