@@ -104,5 +104,12 @@ define([
         return target;
     };
 
+    ReferenceProperty.prototype.equals = function(other) {
+        return this === other || //
+               (this.dynamicObjectCollection === other.dynamicObjectCollection && //
+                this.targetObjectId === other.targetObjectId && //
+                this.targetPropertyName === other.targetPropertyName);
+    };
+
     return ReferenceProperty;
 });

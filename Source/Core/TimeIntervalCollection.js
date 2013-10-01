@@ -31,6 +31,27 @@ define([
         this._intervals = [];
     };
 
+    TimeIntervalCollection.prototype.equals = function(other, dataComparer) {
+        if (this === other) {
+            return true;
+        }
+        if (!(other instanceof TimeIntervalCollection)) {
+            return false;
+        }
+        var intervals = this._intervals;
+        var otherIntervals = other._intervals;
+        var length = intervals.length;
+        if (length !== otherIntervals.length) {
+            return false;
+        }
+        for ( var i = 0; i < length; i++) {
+            if (!intervals[i].equals(otherIntervals[i], dataComparer)) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     /**
      * Gets the interval at the specified index.
      *

@@ -7,7 +7,8 @@ define([
         '../Core/defined',
         '../Core/defineProperties',
         '../Core/DeveloperError',
-        '../Core/ReferenceFrame'
+        '../Core/ReferenceFrame',
+        './Property'
     ], function(
         ConstantProperty,
         PositionProperty,
@@ -16,7 +17,8 @@ define([
         defined,
         defineProperties,
         DeveloperError,
-        ReferenceFrame) {
+        ReferenceFrame,
+        Property) {
     "use strict";
 
     /**
@@ -36,7 +38,7 @@ define([
      * var constantProperty = new ConstantPositionProperty(new Cartesian3(-4225824.0, 1261219.0, -5148934.0), ReferenceFrame.INERTIAL);
      */
     var ConstantPositionProperty = function(value, referenceFrame) {
-        this._property = new ConstantProperty(value, Cartesian3.clone);
+        this._property = new ConstantProperty(value);
         this._referenceFrame = defaultValue(referenceFrame, ReferenceFrame.FIXED);
     };
 
@@ -89,6 +91,13 @@ define([
         }
         var value = this._property.getValue(time, result);
         return PositionProperty.convertToReferenceFrame(time, value, this._referenceFrame, referenceFrame, value);
+    };
+
+    ConstantPositionProperty.prototype.equals = function(other) {
+        return this === other ||
+               (other instanceof ConstantPositionProperty &&
+                Property.equals(this._property, other._property) &&
+                this._referenceFrame === other._referenceFrame);
     };
 
     return ConstantPositionProperty;

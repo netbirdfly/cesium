@@ -224,6 +224,7 @@ define([
         //default line
         var defaultLine = new DynamicObject('GeoJsonDataSource.defaultLine');
         var polyline = new DynamicPolyline();
+        polyline.show = new ConstantProperty(true);
         polyline.color = new ConstantProperty(Color.YELLOW);
         polyline.width = new ConstantProperty(2);
         polyline.outlineColor = new ConstantProperty(Color.BLACK);
@@ -234,6 +235,7 @@ define([
         var defaultPolygon = new DynamicObject('GeoJsonDataSource.defaultPolygon');
 
         polyline = new DynamicPolyline();
+        polyline.show = new ConstantProperty(true);
         polyline.color = new ConstantProperty(Color.YELLOW);
         polyline.width = new ConstantProperty(1);
         polyline.outlineColor = new ConstantProperty(Color.BLACK);
@@ -241,10 +243,11 @@ define([
         defaultPolygon.polyline = polyline;
 
         var polygon = new DynamicPolygon();
+        polygon.show = new ConstantProperty(true);
         defaultPolygon.polygon = polygon;
 
         var material = new ColorMaterialProperty();
-        material.color = new ConstantProperty(new Color(1.0, 1.0, 0.0, 0.1));
+        material.color = new ConstantProperty(new Color(1.0, 1.0, 0.0, 0.25));
         polygon.material = material;
 
         this._changed = new Event();

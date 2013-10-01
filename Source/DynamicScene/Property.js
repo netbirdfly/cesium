@@ -1,7 +1,8 @@
 /*global define*/
-define([
+define(['../Core/defined',
         '../Core/DeveloperError'
     ], function(
+        defined,
         DeveloperError) {
     "use strict";
 
@@ -39,6 +40,15 @@ define([
      * @exception {DeveloperError} time is required.
      */
     Property.prototype.getValue = throwInstantiationError;
+
+    /**
+     *
+     */
+    Property.prototype.equals = throwInstantiationError;
+
+    Property.equals = function(left, right) {
+        return left === right || (defined(left) && left.equals(right));
+    };
 
     return Property;
 });

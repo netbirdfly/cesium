@@ -5,14 +5,16 @@ define([
         '../Core/defineProperties',
         '../Core/DeveloperError',
         '../Core/TimeIntervalCollection',
-        '../Core/ReferenceFrame'
+        '../Core/ReferenceFrame',
+        './Property'
     ], function(
         defaultValue,
         defined,
         defineProperties,
         DeveloperError,
         TimeIntervalCollection,
-        ReferenceFrame) {
+        ReferenceFrame,
+        Property) {
     "use strict";
 
     /**
@@ -96,6 +98,12 @@ define([
             return innerProperty.getValueInReferenceFrame(time, referenceFrame, result);
         }
         return undefined;
+    };
+
+    CompositePositionProperty.prototype.equals = function(other) {
+        return this === other || //
+               (other instanceof CompositePositionProperty && //
+                this._intervals.equals(other._intervals, Property.equals));
     };
 
     return CompositePositionProperty;

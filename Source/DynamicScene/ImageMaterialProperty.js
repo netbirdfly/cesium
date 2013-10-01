@@ -2,11 +2,13 @@
 define([
         '../Core/Cartesian2',
         '../Core/defined',
-        './ConstantProperty'
+        './ConstantProperty',
+        './Property'
     ], function(
         Cartesian2,
         defined,
-        ConstantProperty) {
+        ConstantProperty,
+        Property) {
     "use strict";
 
     /**
@@ -57,6 +59,13 @@ define([
         result.image = defined(this.image) ? this.image.getValue(time) : undefined;
         result.repeat = defined(this.repeat) ? this.repeat.getValue(time, result.repeat) : undefined;
         return result;
+    };
+
+    ImageMaterialProperty.prototype.equals = function(other) {
+        return this === other || //
+               (other instanceof ImageMaterialProperty && //
+                Property.equals(this.image, other.image) && //
+                Property.equals(this.repeat, other.repeat));
     };
 
     return ImageMaterialProperty;
