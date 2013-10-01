@@ -230,6 +230,19 @@ define(['../Core/createGuid',
         for ( var j = 0; j < el.length; j++) {
             processLinearRing(dataSource, dynamicObject, kml, el[j]);
         }
+
+        var extrude = getNumericValue(node, 'extrude');
+        if (extrude === 1) {
+
+
+            var tmp = dynamicObject.vertexPositions.getValue()[0];
+
+            if (!defined(dynamicObject.polygon)) {
+                dynamicObject.polygon = new DynamicPolygon();
+            }
+            dynamicObject.polygon.height = new ConstantProperty(0);
+            dynamicObject.polygon.extrudedHeight = new ConstantProperty(Ellipsoid.WGS84.cartesianToCartographic(tmp).height);
+        }
     }
 
     function processGxTrack(dataSource, dynamicObject, kml, node) {

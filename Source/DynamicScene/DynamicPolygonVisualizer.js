@@ -108,11 +108,19 @@ define([
             var colorProperty = material.color;
             var color = defined(colorProperty) ? colorProperty.getValue(time) : Color.WHITE;
 
+            var heightProperty = polygon.height;
+            var extrudedHeightProperty = polygon.extrudedHeight;
+
+            var height = defined(heightProperty) ? heightProperty.getValue(time) : undefined;
+            var extrudedHeight = defined(extrudedHeightProperty) ? extrudedHeightProperty.getValue(time) : undefined;
+
             var instance = new GeometryInstance({
                 id : dynamicObject,
                 geometry : PolygonGeometry.fromPositions({
                     positions : positions,
-                    vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT
+                    vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT,
+                    height : height,
+                    extrudedHeight : extrudedHeight
                 }),
                 attributes : {
                     show : new ShowGeometryInstanceAttribute(show),

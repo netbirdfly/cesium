@@ -50,7 +50,9 @@ define(['../Core/defaultValue',
          * @memberof DynamicPolygon.prototype
          * @type {MaterialProperty}
          */
-        material : createDynamicPropertyDescriptor('material', '_material')
+        material : createDynamicPropertyDescriptor('material', '_material'),
+        height : createDynamicPropertyDescriptor('height', '_height'),
+        extrudedHeight : createDynamicPropertyDescriptor('extrudedHeight', '_extrudedHeight')
     });
 
     /**
