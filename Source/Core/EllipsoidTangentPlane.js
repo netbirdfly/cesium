@@ -9,6 +9,7 @@ define([
         './Cartesian2',
         './Cartesian3',
         './Ellipsoid',
+        './Matrix4',
         './Ray',
         './Plane'
     ], function(
@@ -21,6 +22,7 @@ define([
         Cartesian2,
         Cartesian3,
         Ellipsoid,
+        Matrix4,
         Ray,
         Plane) {
     "use strict";
@@ -52,10 +54,10 @@ define([
         var eastNorthUp = Transforms.eastNorthUpToFixedFrame(origin, ellipsoid);
         this._ellipsoid = ellipsoid;
         this._origin = Cartesian3.clone(origin);
-        this._xAxis = Cartesian3.fromCartesian4(eastNorthUp.getColumn(0));
-        this._yAxis = Cartesian3.fromCartesian4(eastNorthUp.getColumn(1));
+        this._xAxis = Cartesian3.fromCartesian4(Matrix4.getColumn(eastNorthUp, 0));
+        this._yAxis = Cartesian3.fromCartesian4(Matrix4.getColumn(eastNorthUp, 1));
 
-        var normal = Cartesian3.fromCartesian4(eastNorthUp.getColumn(2));
+        var normal = Cartesian3.fromCartesian4(Matrix4.getColumn(eastNorthUp, 2));
         this._plane = Plane.fromPointNormal(origin, normal);
     };
 
@@ -124,9 +126,9 @@ define([
         }
 
         if (defined(intersectionPoint)) {
-            var v = intersectionPoint.subtract(this._origin, intersectionPoint);
-            var x = this._xAxis.dot(v);
-            var y = this._yAxis.dot(v);
+            var v = Cartesian3.subtract(intersectionPoint, this._origin, intersectionPoint);
+            var x = Cartesian3.dot(this._xAxis, v);
+            var y = Cartesian3.dot(this._yAxis, v);
 
             if (!defined(result)) {
                 return new Cartesian2(x, y);
@@ -202,9 +204,9 @@ define([
 
         for ( var i = 0; i < length; ++i) {
             var position = cartesians[i];
-            xAxis.multiplyByScalar(position.x, tmp);
+            Cartesian3.multiplyByScalar(xAxis, position.x, tmp);
             var point = result[i] = Cartesian3.add(origin, tmp, result[i]);
-            yAxis.multiplyByScalar(position.y, tmp);
+            Cartesian3.multiplyByScalar(yAxis, position.y, tmp);
             Cartesian3.add(point, tmp, point);
             ellipsoid.scaleToGeocentricSurface(point, point);
         }
